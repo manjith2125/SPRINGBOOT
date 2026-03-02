@@ -70,7 +70,25 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<ErrorDtls> (error, HttpStatus.INTERNAL_SERVER_ERROR);
 		
 	}
-	
-	
-	
+
+	@ExceptionHandler(MailAlreadyExists.class)
+	public ResponseEntity<ErrorDtls> MailAlreadyExists(MailAlreadyExists ex,HttpServletRequest request){
+
+		ErrorDtls error=new ErrorDtls(new Date(), 420, "MailAlreadyExists", ex.getMessage(), request.getRequestURI());
+		return new ResponseEntity<> (error , HttpStatus.ALREADY_REPORTED);
+
+	}
+
+	@ExceptionHandler(MobileNumberAlreadyExists.class)
+	public ResponseEntity<ErrorDtls> MobileNumberAlreadyExists(MobileNumberAlreadyExists ex,HttpServletRequest request){
+
+		ErrorDtls error=new ErrorDtls(new Date(), 421, "MobileNumberAlreadyExists", ex.getMessage(), request.getRequestURI());
+		return new ResponseEntity<ErrorDtls> (error , HttpStatus.ALREADY_REPORTED);
+
+	}
+
+
+
+
+
 }

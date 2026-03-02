@@ -6,16 +6,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 
 @Setter
 @Getter
-
-
-@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+//@Data
 @Table  (name="employee_b15")							// with this we can change the table name to out coustum name ...
 @Entity // This will consider it as entity for jdbc..
 public class Employee {

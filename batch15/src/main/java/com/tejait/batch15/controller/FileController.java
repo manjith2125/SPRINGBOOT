@@ -31,7 +31,7 @@ import com.tejait.batch15.model.File;
 import com.tejait.batch15.service.FileService;
 
 import lombok.AllArgsConstructor;
- @AllArgsConstructor
+@AllArgsConstructor
 @RestController
 
 @RequestMapping("/file")
