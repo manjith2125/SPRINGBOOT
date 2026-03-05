@@ -20,7 +20,7 @@ import java.util.List;
 public class AssuranceDetailsServiceImpl implements AssuranceDetailsService {
 
     private final AssuranceDetailsRepository repository;
-    private final ObjectMapper objectMapper = new ObjectMapper(); // ← changed: no injection
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // ========= JSON UPLOAD =========
     @Override
@@ -31,9 +31,22 @@ public class AssuranceDetailsServiceImpl implements AssuranceDetailsService {
             throw new IllegalArgumentException("Uploaded file is empty or null");
         }
 
+        // prevent duplicate upload
+        List<AssuranceDetails> existing =
+                repository.findAllByAppId(appId);
+
+        if (!existing.isEmpty()) {
+            log.info("Data already exists for appId: {}, skipping upload", appId);
+            return;
+        }
+
         try {
+
             List<AssuranceDetails> list = Arrays.asList(
-                    objectMapper.readValue(file.getInputStream(), AssuranceDetails[].class)
+                    objectMapper.readValue(
+                            file.getInputStream(),
+                            AssuranceDetails[].class
+                    )
             );
 
             list.forEach(d -> {
@@ -42,11 +55,13 @@ public class AssuranceDetailsServiceImpl implements AssuranceDetailsService {
             });
 
             repository.saveAll(list);
-            log.info("Successfully uploaded {} records for appId: {}", list.size(), appId);
+
+            log.info("Successfully uploaded {} records for appId: {}",
+                    list.size(), appId);
 
         } catch (IOException e) {
             log.error("JSON upload failed for appId: {}", appId, e);
-            throw new RuntimeException("JSON upload failed: " + e.getMessage(), e);
+            throw new RuntimeException("JSON upload failed", e);
         }
     }
 
@@ -61,17 +76,14 @@ public class AssuranceDetailsServiceImpl implements AssuranceDetailsService {
         }
 
         list.forEach(d -> d.setAppId(appId));
+
         repository.saveAll(list);
+
         log.info("Saved {} records for appId: {}", list.size(), appId);
     }
 
-    // ========= GET DATA =========
     @Override
-    @Transactional(readOnly = true)
     public List<AssuranceDetails> getAllByAppId(int appId) {
-
-        List<AssuranceDetails> result = repository.findAllByAppId(appId);
-        log.info("Fetched {} records for appId: {}", result.size(), appId);
-        return result;
+        return repository.findAllByAppId(appId);
     }
 }
