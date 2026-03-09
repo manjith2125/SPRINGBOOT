@@ -34,7 +34,7 @@ import lombok.AllArgsConstructor;
 //@CrossOrigin
 @RestController
 @RequestMapping("/employee")
-public class EmployeeController {
+public class  EmployeeController {
 	
 	//@Autowired
 	EmployeeService service;

@@ -18,9 +18,22 @@ public interface TranscationRepository extends JpaRepository<Transcation, Intege
     @Transactional
     void deleteAllByAppId(Integer appId);
 
-    // 🔥 ADD THIS METHOD
+    // 🔥 EXISTING METHOD
     @Modifying
     @Transactional
     @Query(value = "ALTER TABLE transcation AUTO_INCREMENT = 1", nativeQuery = true)
     void resetAutoIncrement();
+
+
+    // ✅ NEW METHOD FOR TxnsStatement (FAST DATE FILTER)
+    @Query(value =
+            "SELECT * FROM transcation " +
+                    "WHERE app_id = :appId " +
+                    "AND STR_TO_DATE(transaction_date,'%d-%m-%Y %H:%i') " +
+                    "BETWEEN :startDate AND :endDate",
+            nativeQuery = true)
+    List<Transcation> findTransactionsByDateRange(
+            Integer appId,
+            String startDate,
+            String endDate);
 }
